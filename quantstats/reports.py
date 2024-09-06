@@ -109,8 +109,11 @@ def html(
     else:
         benchmark_title = None
 
+    # Correct calculation of #years
+    num_days = (returns.index[-1] - returns.index[0]).days
+    num_years = num_days / 365.0
     date_range = returns.index.strftime("%e %b, %Y")
-    tpl = tpl.replace("{{date_range}}", date_range[0] + " - " + date_range[-1])
+    tpl = tpl.replace("{{date_range}}", date_range[0] + " - " + date_range[-1] + " (~" + str(round(num_years,2)) + " years)")
     tpl = tpl.replace("{{title}}", title)
     tpl = tpl.replace("{{v}}", __version__)
 

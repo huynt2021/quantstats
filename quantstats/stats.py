@@ -515,10 +515,10 @@ def gain_to_pain_ratio(returns, rf=0, resolution="D"):
 def cagr(returns, rf=0.0, compounded=True, periods=252):
     """
     Calculates the communicative annualized growth return
-    (CAGR%) of access returns
+    (CAGR%) of excess returns.
 
     If rf is non-zero, you must specify periods.
-    In this case, rf is assumed to be expressed in yearly (annualized) terms
+    In this case, rf is assumed to be expressed in yearly (annualized) terms.
     """
     total = _utils._prepare_returns(returns, rf)
     if compounded:
@@ -526,9 +526,12 @@ def cagr(returns, rf=0.0, compounded=True, periods=252):
     else:
         total = _np.sum(total)
 
-    years = (returns.index[-1] - returns.index[0]).days / periods
+    # Correct calculation of years
+    days = (returns.index[-1] - returns.index[0]).days
+    years = days / 365.0
 
-    res = abs(total + 1.0) ** (1.0 / years) - 1
+    # Avoid using abs in CAGR calculation
+    res = (total + 1.0) ** (1.0 / years) - 1
 
     if isinstance(returns, _pd.DataFrame):
         res = _pd.Series(res)
